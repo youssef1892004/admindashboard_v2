@@ -6,6 +6,8 @@ import { client } from '@/lib/graphql';
 import { GLOBAL_SEARCH } from '@/lib/graphql/queries/search';
 import Link from 'next/link';
 import { debounce } from 'lodash';
+import { signOut } from 'next-auth/react'; // Add this import
+import { useRouter } from 'next/navigation'; // Add this import
 
 // Define types for our data
 interface Book {
@@ -42,10 +44,12 @@ interface ProcessedAuthor {
 }
 
 export default function Navbar() {
+  const router = useRouter(); // Initialize useRouter
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ProcessedAuthor[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false); // Add this state
 
   const performSearch = async (searchQuery: string) => {
     if (searchQuery.length < 2) {
@@ -128,6 +132,18 @@ export default function Navbar() {
     }, 200);
   };
 
+  const handleLogout = async () => {
+    setShowSettingsDropdown(false); // Close dropdown
+    await signOut({ callbackUrl: '/login' }); // Redirect to login page after logout
+  };
+
+  const handleClearCache = () => {
+    setShowSettingsDropdown(false); // Close dropdown
+    router.refresh(); // Refresh the current route
+    // Optionally: window.location.reload(true) for a hard refresh, or clear localStorage
+  };
+
+
   return (
     <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-4 flex-1">
@@ -194,9 +210,27 @@ export default function Navbar() {
           <Bell size={20} className="text-gray-600" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full"></span>
         </button>
-        <button className="p-2 hover:bg-gray-100 rounded-lg">
-          <Settings size={20} className="text-gray-600" />
-        </button>
+        <div className="relative">
+          <button onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} className="p-2 hover:bg-gray-100 rounded-lg">
+            <Settings size={20} className="text-gray-600" />
+          </button>
+          {showSettingsDropdown && (
+            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <button
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+              <button
+                onClick={handleClearCache}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Clear Cache
+              </button>
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-2 ml-2">
           <div className="w-8 h-8 bg-gray-300 rounded-full overflow-hidden">
             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="User" className="w-full h-full" />
