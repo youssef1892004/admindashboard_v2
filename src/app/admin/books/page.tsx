@@ -98,6 +98,14 @@ export default function BooksPage() {
                 <p><strong>Published:</strong> {new Date(book.publicationDate).toLocaleDateString()}</p>
               </div>
               <div className="flex justify-end mt-2">
+                  <a 
+                    href={`https://ilibrary.site/books/${book.id}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded text-xs mr-2"
+                  >
+                    View on Site
+                  </a>
                   <Link href={`/admin/books/edit/${book.id}`} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-xs mr-2">
                     Edit
                   </Link>

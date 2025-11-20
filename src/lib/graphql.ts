@@ -17,11 +17,14 @@ export const client = new GraphQLClient(endpoint, {
 
 export * from './graphql/queries/users';
 export * from './graphql/queries/categories';
+
 export * from './graphql/queries/books';
 export * from './graphql/queries/chapters';
 export * from './graphql/queries/stats';
+export * from './graphql/queries/search';
 export * from './graphql/mutations/users';
 export * from './graphql/mutations/categories';
 export * from './graphql/mutations/books';
 export * from './graphql/mutations/chapters';
 export * from './graphql/mutations/roles';
+
